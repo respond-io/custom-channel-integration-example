@@ -1,0 +1,12 @@
+version: '3.5'
+services:  
+  custom_channel:
+    container_name: custom_channel
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - './:/app'
+      - /app/node_modules
+    ports:
+      - '3030:3030'

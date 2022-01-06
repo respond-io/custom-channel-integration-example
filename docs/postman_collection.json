@@ -1,0 +1,80 @@
+{
+	"info": {
+		"_postman_id": "7b2a7007-dc6f-459f-8a36-fae420a4fd7e",
+		"name": "Custom Channel",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Send message webhook to platform",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.globals.set(\"now\", Date.now());"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "",
+						"value": "",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"channelId\": \"{{channelId}}\",\n    \"contactId\": \"{{contactId}}\",\n    \"events\": [{\n        \"type\": \"message\",\n        \"mId\": \"{{$randomUUID}}\",\n        \"timestamp\": {{now}}, \n        \"message\": {\n            \"type\" : \"text\", \n            \"text\" : \"Hello World {{now}}\"\n        }\n    }],\n    \"contact\": {\n        \"firstName\": \"Leo\",\n        \"lastName\": \"Wong\",\n        \"profilePic\": \"https://assets-global.website-files.com/6030eb20edb26744961d31ee/61a71a4aa8ad2026da9f3eb3_respondio-rgb-black.svg\",\n        \"locale\": \"en_US\",\n        \"countryCode\": \"MY\",\n        \"timezone\": 8,\n        \"email\": \"tech@rocketbots.io\",\n        \"phone\": \"+60123456789\",\n        \"language\": \"en\"\n    }\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{webhookURL}}",
+					"host": [
+						"{{webhookURL}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
