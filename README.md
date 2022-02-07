@@ -1,52 +1,47 @@
-# Middle Server
+# Custom Channel Integration Example
 
-This application is a middle server between the Custom Channel and 
-third-party chat such as local SMS providers for better market penetration.
+In this example we will be integrating the respond.io platform with the third party platform to use them as a channel inside respond.io.
 
-## List Of APIs
+In this example we will be using the [ClickSend](https://clicksend.com) SMS provider as a reference
 
-| No. | Method | API Endpoint | Description | Authorization | Request Body (Data Type)
-|--- | ---- | ------ | ------------------ |  ---------- | ---------- |
-| 1 | GET | / | Checks API health | none | none
-| 2 | POST| /message | To retrieve message and return mId to Custom Channel and Third Party Chat | Bearer Token | message (Object), channelId (String), contactId (String)
+## Endpoints
+
+| Method | Path | Description |
+| ---- | ------ | ------------------ |
+| POST| /message | Handle outbound messages i.e. receive messages from the respond.io and pass them to the clicksend using API |
+| POST| /clicksend/push_message | Handle inbound messages i .e receive messages from the clicksend and pass them to the respond.io using webhook |
 
 
-## API Flow Diagram
-<p align='center'> <img src="docs/API_Flow.drawio.png" height="500"/></p> <p align='center'> Figure 1 : POST /message Diagram </p> 
+## Sequence Diagrams
+We will be explaining the outbound and inbound message handling with the help of sequence diagrams
+### Outbound Message
+```mermaid
+sequenceDiagram
+    participant Respond.io
+    participant Integration Server
+    participant Click Send
+    Respond.io->>Integration Server: Outbound message (send message endpoint)
+    Integration Server->>Click Send: Calls SMS send API with the outbound message
+    Click Send->>Integration Server: Response 200 OK or 4xx
+    Integration Server->>Respond.io: Response 200 OK or 4xx with error message
+    
+```
+### Inbound Message
+```mermaid
+sequenceDiagram
+    participant Respond.io
+    participant Integration Server
+    participant Click Send
+    
+    Click Send->>Integration Server: Inbound message (push_message endpoint)
+    Integration Server->>Respond.io: Calls webhook with the inbound message
+    
+    Respond.io->>Integration Server: Response 200 OK or 4xx
+    Integration Server->>Click Send: Response 200 OK or 4xx
+    
+```
 
-## Run Server Locally
-    1. Copy the .env.sample and paste it to .env file.
 
-    2. Run 'ngrok http 3030' in a new terminal to expose server in public.
-    Please refer https://ngrok.com/download to download.
-
-    3. Go to 'http://localhost:4040/status' in broswer to copy the ngrok URL.
-
-    4. In Platform, paste the ngrok URL to the Custom Channel configuration and choose a type (phone or custom) to create channel.
-
-    5. Copy the token, channelId after channel is created and paste it to CHANNEL_TOKEN, CHANNEL_ID variables in .env file.
-
-    6. Run 'docker-compose up' to start the server.
-
-  ## Important Memo
-
-  - Include the bearer token from the CHANNEL_TOKEN variable in the `Authorization` section or `Headers` section. Either way is fine.
-  - Include the message, channelId and contactId in the `Request Body` section. 
-  - The channelId in the `Request Body` section must be the same as CHANNEL_ID in .env file. Otherwise, error will be thrown.
-  - The HTTP request method is POST.
-  - Postman collection is avaiable in the docs folder to test out the webhook URL. Please fill up the environment variable before triggering.
-
-## FAQ
-
-#### Is it compulsory to use 3030 as my app port?
-
-It is not compulsory to use `3030` as your app port. You may change it to other port such as `5000`, `8080` etc in Dockerfile, docker-compose.yml and .env file.
-
-#### Can I run the server manually instead of using docker?
-Yes, you may run the server manually from the terminal by downloading the whole repository.
-
-#### Why I could not run the server by using docker command?
-If you are using Linux, try to run `sudo docker compose-up` instead.
 
 
 
