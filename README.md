@@ -1,46 +1,61 @@
-# Custom Channel Integration Example
 
-In this example we will be integrating the respond.io platform with the third party platform to use them as a channel inside respond.io.
+# Custom Channel Integration Server (Example)
 
-In this example we will be using the [ClickSend](https://clicksend.com) SMS provider as a reference
+This is a sample project to help you get started with integrating the [respond.io](https://respond.io) platform with any third-party messaging service provider, as a "custom channel" within respond.io.
 
-## Endpoints
+This example implements an SMS provider called [ClickSend.com](https://clicksend.com). The code can be used as a general reference.
 
-| Method | Path | Description |
-| ---- | ------ | ------------------ |
-| POST| /message | Handle outbound messages i.e. receive messages from the respond.io and pass them to the clicksend using API |
-| POST| /clicksend/push_message | Handle inbound messages i .e receive messages from the clicksend and pass them to the respond.io using webhook |
+## API Routes
 
+| Method | Path | Type | Description |
+| ---- | ------ | --- | ------------------ |
+| POST| /message | Outbound | Receive messages from respond.io and pass them to ClickSend using API |
+| POST| /clicksend/push_message | Inbound | Receive messages from ClickSend and pass them to respond.io via the custom channel webhook |
 
-## Sequence Diagrams
-We will be explaining the outbound and inbound message handling with the help of sequence diagrams
-### Outbound Message
+>**Port**: 3030.
+
+Follow the steps [here](https://docs.respond.io/messaging-channels/custom-channel#step-1-create-a-channel) to get the custom channel API token.
+
+## Setup
+
+Run the following commands:
+
+- `npm install`
+- `npm start`
+
+## How it works?
+
+### Outbound Messages
 ```mermaid
 sequenceDiagram
-    participant Respond.io
-    participant Integration Server
-    participant Click Send
-    Respond.io->>Integration Server: Outbound message (send message endpoint)
-    Integration Server->>Click Send: Calls SMS send API with the outbound message
-    Click Send->>Integration Server: Response 200 OK or 4xx
-    Integration Server->>Respond.io: Response 200 OK or 4xx with error message
+    participant respond.io
+    participant Custom Integration Server
+    participant ClickSend.com
+    respond.io ->> Custom Integration Server: Send outbound message. Route: /message
+    Custom Integration Server->> ClickSend.com: Calls SMS send API with the outbound message
+    ClickSend.com ->> Custom Integration Server: Send response: 200 OK or 4xx
+    Custom Integration Server ->> respond.io: Send response: 200 OK or 4xx (with error message)
     
 ```
-### Inbound Message
+### Inbound Messages
 ```mermaid
 sequenceDiagram
-    participant Respond.io
-    participant Integration Server
-    participant Click Send
+    participant respond.io
+    participant Custom Integration Server
+    participant ClickSend.com
     
-    Click Send->>Integration Server: Inbound message (push_message endpoint)
-    Integration Server->>Respond.io: Calls webhook with the inbound message
+    ClickSend.com ->> Custom Integration Server: Receive inbound message. Route: /clicksend/push_message
+    Custom Integration Server ->> respond.io: Calls custom channel webhook with the inbound message
     
-    Respond.io->>Integration Server: Response 200 OK or 4xx
-    Integration Server->>Click Send: Response 200 OK or 4xx
-    
+    respond.io ->> Custom Integration Server: Send response: 200 OK or 4xx
+    Custom Integration Server ->> ClickSend.com: Send response: 200 OK or 4xx
 ```
+[See the visual diagram on Whimsical](https://whimsical.com/diagram-4eQ4FGca7go5gZ7vMEJfwU)
 
+## References
+
+- [ClickSend.com API Docs](https://developers.clicksend.com/docs/rest/v3/#view-inbound-sms)
+- [respond.io: Custom Channel](https://docs.respond.io/messaging-channels/custom-channel)
 
 
 
