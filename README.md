@@ -1,6 +1,9 @@
 
 # Custom Channel Integration Server (Example)
 
+⚠️ **Important Notice**  
+👉 **We do not provide support via GitHub Issues.** If you encounter a problem or need help, please reach out to our [Support team](https://respond.io/contact) directly. Thank you for your understanding!
+
 This is a sample project to help you get started with integrating the [respond.io](https://respond.io) platform with any third-party messaging service provider, as a "custom channel" within respond.io.
 
 This example implements an SMS provider called [ClickSend.com](https://clicksend.com). The code can be used as a general reference.
